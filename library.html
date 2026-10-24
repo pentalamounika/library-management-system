@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>📚Library Management</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body>
+        <main class="container">
+            <h1>Library</h1>
+            <section class="panel">
+                <div class="strip"></div>
+                <form class="library-form" th:action="@{/library/save}" th:object="${record}" method="post">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="form-row">
+                        <label for="studentName">Student Name:</label>
+                        <select id="studentName" th:field="*{studentName}" required>
+                            <option value="">Select Student</option>
+                            <option th:each="s:${students}" th:value="${s}" th:text="${s}"></option>
+                        </select>
+                        <small th:errors="*{studentName}" class="error">
+                        </small>
+                    </div>
+                    <div class="form-row">
+                        <label for="bookName">Book Name:</label>
+                        <select id="bookName" th:field="*{bookName}" required>
+                            <option value="">Select Book</option>
+                            <option th:each="b:${books}" th:value="${b}" th:text="${b}"></option>
+                        </select>
+                        <small th:errors="*{bookName}" class="error">
+                        </small>
+                    </div>
+                    <div class="form-row">
+                        <label for="startDate">Start Date:</label>
+                        <input id="startDate" type="date" th:field="*{startDate}" required>
+                        <small th:errors="*{startDate}" class="error">
+                        </small>
+                    </div>
+                    <div class="form-row">
+                        <label for="endDate">End Date:</label>
+                        <input id="endDate" type="date" th:field="*{endDate}" required>
+                        <small th:errors="*{endDate}" class="error">
+                        </small>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn primary" type="submit" th:text="${record.id == null ? 'Save' : 'Update'}">Save</button>
+                        <a class="btn light" th:href="@{/library}">Cancel</a>
+                    </div>
+                </form>
+            </section>
+            <section class="panel table-panel">
+                <h2>Library Table</h2>
+                <div class="tools"><input id="search" type="search" placeholder="Search..."></div>
+                <div class="table-wrap">
+                    <table id="records">
+                        <thead>
+                            <tr>
+                                <th>S. Name</th>
+                                <th>B Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rows">
+                            <tr th:each="r:${records}" class="data-row">
+                                <td th:text="${r.studentName}">
+                                </td>
+                                <td th:text="${r.bookName}">
+                                </td>
+                                <td th:text="${#temporals.format(r.startDate,'dd-MM-yyyy')}">
+                                </td>
+                                <td th:text="${#temporals.format(r.endDate,'dd-MM-yyyy')}">
+                                </td>
+                                <td class="actions">
+                                    <a class="btn primary small" th:href="@{/library/edit/{id}(id=${r.id})}">Edit</a>
+                                    <form th:action="@{/library/delete/{id}(id=${r.id})}" method="post" onsubmit="return confirm('Delete this record?')">
+                                        <button class="btn danger small">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p id="empty" class="empty" th:if="${#lists.isEmpty(records)}">No records found</p>
+                </div>
+                <div class="pagination">
+                    <button id="prev">◀</button>
+                    <span id="page">Page 1</span>
+                    <button id="next">▶</button>
+                </div>
+            </section>
+            <p class="success" th:if="${successMessage}" th:text="${successMessage}"></p>
+        </main>
+        <script th:src="@{/js/library.js}">
+        </script>
+        </body>
+        </html>
